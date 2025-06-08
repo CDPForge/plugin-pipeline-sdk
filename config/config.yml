@@ -1,0 +1,7 @@
+kafkaConfig:
+  brokers:
+  -  'localhost:36715'
+pluginName: 'myPlugin'
+pluginManagerUrl: 'https://plugin_template_url'
+priority: 1 # 1 to 100 (no need if parallel)
+type: 'blocking' # or 'parallel'
