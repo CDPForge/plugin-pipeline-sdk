@@ -1,5 +1,5 @@
 import { Kafka } from 'kafkajs';
-import MyPlugin from './functions/Plugin';
+import MyPlugin from './plugin/Plugin';
 import Config from './config';
 import PipelineStage from './PipelineStage';
 import RestEP from './RestEP';

@@ -1,5 +1,5 @@
 import { Kafka, Producer, Consumer, EachMessagePayload } from "kafkajs";
-import PipelinePluginI from "./functions/PipelinePluginI";
+import PipelinePluginI from "./plugin/PipelinePluginI";
 import Config from "./config";
 import { Log } from "./types";
 
