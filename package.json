@@ -5,9 +5,10 @@
     "main": "index.js",
     "scripts": {
         "test": "npx jest",
-        "start": "node dist/src/index.js",
+        "start": "node --inspect=7000 dist/src/index.js",
         "dev": "nodemon --watch 'src/**' --ext 'ts,json' --exec 'npm run build && npm run start'",
-        "build": "tsc"
+        "build": "tsc",
+        "postbuild": "cp -R ./config ./dist"
     },
     "author": "CDP Forge",
     "license": "GPL-3.0",
@@ -22,6 +23,7 @@
         "@types/jest": "^29.5.14",
         "@types/node": "^20.12.12",
         "jest": "^29.7.0",
+        "nodemon": "^3.1.0",
         "ts-jest": "^29.2.5",
         "typescript": "^5.7.3"
     }
