@@ -17,10 +17,10 @@ export default class PipelineSTage{
     constructor(plugin: PipelinePluginI) {
         this.plugin = plugin;
         this.kafka = new Kafka({
-          clientId: Config.getInstance().config.pluginName + `plugin-${podName}`,
+          clientId: Config.getInstance().config.plugin.name + `plugin-${podName}`,
           brokers: Config.getInstance().config.kafkaConfig.brokers,
-        });;
-        this.consumer = this.kafka.consumer({ groupId: Config.getInstance().config.pluginName + `plugin` });
+        });
+        this.consumer = this.kafka.consumer({ groupId: Config.getInstance().config.plugin.name + `plugin` });
         this.producer = this.kafka.producer();
         this.input = null;
         this.output = null;
@@ -29,7 +29,8 @@ export default class PipelineSTage{
 
     async start(inputTopic: string, outputTopic: string | null = null): Promise<void> {
         this.input = inputTopic;
-        this.output = outputTopic;
+        this.output = outputTopic; 
+        this.currentOperation = this.currentOperation.then(() => this.plugin.init());
         await this.currentOperation;
         this.currentOperation = this._start();
         return this.currentOperation;

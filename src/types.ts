@@ -49,3 +49,9 @@ export interface GoogleTopic {
     id: keyof typeof GoogleTopicsMap;
     name: (typeof GoogleTopicsMap)[keyof typeof GoogleTopicsMap];
 }
+
+export interface ConfigMessage {
+    inputTopic: string;
+    outputTopic: string | null;
+    plugin: string;
+}

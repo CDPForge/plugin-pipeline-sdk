@@ -1,0 +1,4 @@
+plugin:
+  name: 'myPlugin'
+  priority: 1 # 1 to 100 (no need if parallel)
+  type: 'blocking' # or 'parallel'
