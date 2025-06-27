@@ -1,17 +1,37 @@
 {
-    "name": "plugin-pipeline-template",
+    "name": "plugin-pipeline-sdk",
     "version": "1.0.0",
-    "private": true,
-    "main": "index.js",
+    "description": "SDK for pipeline plugins for CDP Forge platform",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist/**/*",
+        "config/**/*",
+        "README.md",
+        "LICENSE"
+    ],
     "scripts": {
         "test": "npx jest",
-        "start": "node --inspect=7000 dist/src/index.js",
-        "dev": "nodemon --watch 'src/**' --ext 'ts,json' --exec 'npm run build && npm run start'",
         "build": "tsc",
-        "postbuild": "cp -R ./config ./dist"
+        "postbuild": "cp -R ./config ./dist",
+        "prepublishOnly": "npm run build",
+        "clean": "rm -rf dist"
     },
+    "keywords": [
+        "plugin-pipeline",
+        "CDP",
+        "Forge"
+    ],
     "author": "CDP Forge",
     "license": "GPL-3.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/CDPForge/plugin-pipeline-template.git"
+    },
+    "bugs": {
+        "url": "https://github.com/CDPForge/plugin-pipeline-template/issues"
+    },
+    "homepage": "https://github.com/CDPForge/plugin-pipeline-template#readme",
     "dependencies": {
         "kafkajs": "^2.2.4",
         "node-fetch": "^3.3.2",
@@ -24,5 +44,8 @@
         "nodemon": "^3.1.0",
         "ts-jest": "^29.2.5",
         "typescript": "^5.7.3"
+    },
+    "engines": {
+        "node": ">=16.0.0"
     }
 }

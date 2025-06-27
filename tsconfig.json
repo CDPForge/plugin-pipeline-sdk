@@ -10,7 +10,10 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "rootDir": "src"
   },
   "include": [
     "src/**/*",

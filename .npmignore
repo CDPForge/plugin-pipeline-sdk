@@ -1,0 +1,40 @@
+# File di sviluppo
+src/
+__tests__/
+*.ts
+*.tsx
+tsconfig.json
+jest.config.js
+.nvmrc
+
+# File di build temporanei
+node_modules/
+.git/
+.gitignore
+
+# File di sviluppo
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# File di sistema
+.DS_Store
+Thumbs.db
+
+# File di test
+coverage/
+.nyc_output/
+
+# File di configurazione locale
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Docker
+Dockerfile
+.dockerignore 
