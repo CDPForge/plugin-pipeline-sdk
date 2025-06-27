@@ -12,6 +12,7 @@
     ],
     "scripts": {
         "test": "npx jest",
+        "test:build": "tsc -p tsconfig.test.json",
         "build": "tsc",
         "postbuild": "cp -R ./config ./dist",
         "prepublishOnly": "npm run build",
