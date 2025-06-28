@@ -18,6 +18,7 @@ export interface Log {
         os?: string;
         type?: string;
         userAgent?: string;
+        [key: string]: any;
     };
     event: string;
     geo?: {
@@ -28,6 +29,9 @@ export interface Log {
             coordinates: number[];
         };
         region?: string;
+        zipCode?: string;
+        timeZone?: string;
+        [key: string]: any;
     };
     googleTopics?: GoogleTopic[];
     instance: number;
@@ -37,12 +41,14 @@ export interface Log {
         image?: string;
         title: string;
         type?: string;
+        [key: string]: any;
     };
     product?: Product[];
     referrer?: string;
     session: string;
     target?: string;
     order?: string;
+    [key: string]: any;
 }
 
 export interface GoogleTopic {
@@ -68,6 +74,9 @@ export interface Config {
     };
     kafkaConfig: {
         brokers: string[];
+    };
+    mysqlConfig?: {
+        uri: string;
     };
     [key: string]: any;
 }
