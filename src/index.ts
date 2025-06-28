@@ -1,9 +1,8 @@
-// Esportazioni principali della libreria
 export { default as PipelinePluginI } from './plugin/PipelinePluginI';
 export { default as PipelineStage } from './PipelineStage';
 export { default as ConfigListener } from './ConfigListener';
+export { start } from './startServer';
 
-// Esportazione dei tipi
 export type {
   Log,
   Product,
@@ -11,6 +10,3 @@ export type {
   ConfigMessage,
   Config
 } from './types';
-
-// Funzione per avviare il server con il plugin di default
-export { start } from './startServer';
