@@ -1,6 +1,6 @@
 import { Kafka, Producer, Consumer, EachMessagePayload } from "kafkajs";
 import PipelinePluginI from "./plugin/PipelinePluginI";
-import { Log, Config } from "./types";
+import { Log, Config } from "@cdp-forge/types";
 
 const podName = process.env.CLIENT_ID || 'default-client-id';
 

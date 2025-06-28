@@ -1,7 +1,7 @@
 import YAML from 'yaml';
 import * as fs from 'fs';
-import path from 'path';
-import { Config } from './types';
+import { Config } from '@cdp-forge/types';
+
 export default class ConfigReader {
   public static config: Config;
 

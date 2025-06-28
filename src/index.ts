@@ -4,10 +4,4 @@ export { default as ConfigListener } from './ConfigListener';
 export { default as ConfigReader } from './ConfigReader';
 export { start } from './startServer';
 
-export type {
-  Log,
-  Product,
-  GoogleTopic,
-  ConfigMessage,
-  Config
-} from './types';
+export * from '@cdp-forge/types';

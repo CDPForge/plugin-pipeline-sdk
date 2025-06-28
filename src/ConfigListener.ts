@@ -1,6 +1,6 @@
 import { Kafka, Consumer, EachMessagePayload } from "kafkajs";
 import PipelineSTage from "./PipelineStage";
-import { ConfigMessage, Config } from "./types";
+import { ConfigMessage, Config } from "@cdp-forge/types";
 
 const podName = process.env.CLIENT_ID || Math.random().toString(36).substring(2, 10);
 

@@ -1,5 +1,5 @@
 import PipelinePluginI from './plugin/PipelinePluginI';
-import { Config } from './types';
+import { Config } from '@cdp-forge/types';
 import PipelineStage from './PipelineStage';
 import ConfigListener from './ConfigListener';
 
