@@ -1,5 +1,5 @@
 import PipelinePluginI from './plugin/PipelinePluginI';
-import Config from './config';
+import { Config } from './types';
 import PipelineStage from './PipelineStage';
 import ConfigListener from './ConfigListener';
 
@@ -7,27 +7,27 @@ import ConfigListener from './ConfigListener';
 export { default as PipelinePluginI } from './plugin/PipelinePluginI';
 export { default as PipelineStage } from './PipelineStage';
 export { default as ConfigListener } from './ConfigListener';
-export { default as Config } from './config';
 
 // Esportazione dei tipi
 export type {
   Log,
   Product,
   GoogleTopic,
-  ConfigMessage
+  ConfigMessage,
+  Config
 } from './types';
 
 // Funzione per avviare il server con il plugin di default
-export async function start(plugin: PipelinePluginI) {
-  const stage = new PipelineStage(plugin);
-  const configListener = new ConfigListener(stage);
+export async function start(plugin: PipelinePluginI, config: Config) {
+  const stage = new PipelineStage(plugin, config);
+  const configListener = new ConfigListener(stage, config);
   configListener.start().then(() => {
-    fetch(`${Config.getInstance().config.pluginManagerUrl}/register`, {
+    fetch(`${config.manager.url}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(Config.getInstance().config.plugin),
+      body: JSON.stringify(config.plugin),
     }).then(res => {
       if (!res.ok) {
         throw new Error(`Failed to register plugin with Template Manager: ${res.statusText}`);

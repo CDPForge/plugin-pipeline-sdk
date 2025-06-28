@@ -55,3 +55,19 @@ export interface ConfigMessage {
     outputTopic: string | null;
     plugin: string;
 }
+
+export interface Config {
+    manager: {
+        url: string;
+        config_topic: string;
+    };
+    plugin: {
+        name: string;
+        priority: number;
+        type: 'parallel' | 'blocking';
+    };
+    kafkaConfig: {
+        brokers: string[];
+    };
+    [key: string]: any;
+}

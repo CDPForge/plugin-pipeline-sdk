@@ -1,7 +1,6 @@
 import { Kafka, Producer, Consumer, EachMessagePayload } from "kafkajs";
 import PipelinePluginI from "./plugin/PipelinePluginI";
-import Config from "./config";
-import { Log } from "./types";
+import { Log, Config } from "./types";
 
 const podName = process.env.CLIENT_ID || 'default-client-id';
 
@@ -14,13 +13,13 @@ export default class PipelineSTage{
     output: string | null;
     currentOperation: Promise<void>;
 
-    constructor(plugin: PipelinePluginI) {
+    constructor(plugin: PipelinePluginI, config: Config) {
         this.plugin = plugin;
         this.kafka = new Kafka({
-          clientId: Config.getInstance().config.plugin.name + `plugin-${podName}`,
-          brokers: Config.getInstance().config.kafkaConfig.brokers,
+          clientId: config.plugin.name + `plugin-${podName}`,
+          brokers: config.kafkaConfig.brokers,
         });
-        this.consumer = this.kafka.consumer({ groupId: Config.getInstance().config.plugin.name + `plugin` });
+        this.consumer = this.kafka.consumer({ groupId: config.plugin.name + `plugin` });
         this.producer = this.kafka.producer();
         this.input = null;
         this.output = null;

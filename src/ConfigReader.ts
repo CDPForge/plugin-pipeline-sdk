@@ -1,10 +1,10 @@
 import YAML from 'yaml';
 import * as fs from 'fs';
 import path from 'path';
-
-export default class Config {
-  private static instance: Config;
-  private readonly configData: any;
+import { Config } from './types';
+export default class ConfigReader {
+  private static instance: ConfigReader;
+  private readonly configData: Config;
 
   private constructor() {
     try {
@@ -18,14 +18,14 @@ export default class Config {
     }
   }
 
-  public static getInstance(): Config {
-    if (!Config.instance) {
-      Config.instance = new Config();
+  public static getInstance(): ConfigReader {
+    if (!ConfigReader.instance) {
+      ConfigReader.instance = new ConfigReader();
     }
-    return Config.instance;
+    return ConfigReader.instance;
   }
 
-  public get config(): any {
+  public get config(): Config {
       return this.configData
   }
 }
