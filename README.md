@@ -9,7 +9,7 @@ This project serves as an SDK for building plugins that can be integrated into t
 You can install this library as a dependency in other projects:
 
 ```bash
-npm install plugin-pipeline-sdk
+npm install @cdp-forge/plugin-pipeline-sdk
 ```
 
 ### Usage as Library
@@ -22,7 +22,7 @@ import {
     ConfigReader,
     Log,
     start
-} from 'plugin-pipeline-sdk';
+} from '@cdp-forge/plugin-pipeline-sdk';
 
 // Create a custom plugin
 class MyCustomPlugin implements PipelinePluginI {
@@ -70,7 +70,7 @@ start(customPlugin, config).then(({ stage, configListener }) => {
 1. **Clone the repository:**
    ```bash
    git clone <repository-url>
-   cd plugin-pipeline-template
+   cd plugin-pipeline-sdk
    ```
 
 2. **Install dependencies:**
@@ -103,8 +103,7 @@ mysql:
   uri: 'mysql://user:password@my-server-ip:3306'
 ```
 
-**Important**: If you're using the **Helm installer** provided by the CDP Forge platform, this file is **automatically generated** and you don't need to modify it manually.
-
+**Important**: If you're using the **Helm installer** provided by the CDP Forge platform, this file is **automatically generated** and you should use thia one on your plugin.
 #### `config/plugin.yml` - Plugin-Specific Configuration
 This file contains **plugin-specific settings** that define how your individual plugin behaves within the pipeline.
 
