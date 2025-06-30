@@ -17,12 +17,6 @@ export async function start(plugin: PipelinePluginI, config: Config) {
         if (!res.ok) {
           throw new Error(`Failed to register plugin with Template Manager: ${res.statusText}`);
         }
-        return res.json();
-      }).then(json => {
-        if (!json || !json.inputTopic || !json.outputTopic) {
-          throw new Error('Failed to fetch plugin configuration from Template Manager.');
-        }
-        stage.start(json.inputTopic, json.outputTopic);
       });
     });
     const handleExit = async () => {
