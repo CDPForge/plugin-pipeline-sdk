@@ -27,9 +27,9 @@ export default class ConfigListener {
         await this.consumer.run({
             autoCommit: false,
             eachMessage: async ({ topic, partition, message  }: EachMessagePayload) => {
-                const configs: ConfigMessage[] = message.value ? JSON.parse(message.value.toString()) : null;
-                const config = configs.find(config => config.plugin === this.config.plugin!.name);
-                if(config) {
+                const config: ConfigMessage = message.value ? JSON.parse(message.value.toString()) : null;
+
+                if (config && config.plugin === this.config.plugin!.name) {
                     await this.stage.restart(config.inputTopic, config.outputTopic);
                 }
                 await this.consumer.commitOffsets([{ topic, partition, offset: (BigInt(message.offset) + 1n).toString() }]);

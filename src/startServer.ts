@@ -15,7 +15,7 @@ export async function start(plugin: PipelinePluginI, config: Config) {
         body: JSON.stringify(config.plugin),
       }).then(res => {
         if (!res.ok) {
-          throw new Error(`Failed to register plugin with Template Manager: ${res.statusText}`);
+          throw new Error(`Failed to register plugin with Template Manager: ${res.statusText}, request: ${JSON.stringify(config.plugin)}`);
         }
       });
     });
