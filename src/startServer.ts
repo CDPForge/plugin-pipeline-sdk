@@ -7,7 +7,7 @@ export async function start(plugin: PipelinePluginI, config: Config) {
     const stage = new PipelineStage(plugin, config);
     const configListener = new ConfigListener(stage, config);
     configListener.start().then(() => {
-      fetch(`${config.manager.url}/register`, {
+      fetch(`${config.manager!.url}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
