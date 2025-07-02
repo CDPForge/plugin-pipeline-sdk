@@ -1,4 +1,4 @@
-import PipelinePluginI from "./PipelinePluginI";
+import { PipelinePluginI } from "./PipelinePluginI";
 import { Log } from '@cdp-forge/types';
 export default class MyPlugin implements PipelinePluginI{
     elaborate(log: Log): Promise<Log | null> {
