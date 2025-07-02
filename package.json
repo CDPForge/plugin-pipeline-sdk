@@ -34,7 +34,7 @@
     },
     "homepage": "https://github.com/CDPForge/plugin-pipeline-template#readme",
     "dependencies": {
-        "@cdp-forge/types": "^1.0.0",
+        "@cdp-forge/types": "^1.1.3",
         "kafkajs": "^2.2.4",
         "node-fetch": "^3.3.2",
         "yaml": "^2.7.0"
