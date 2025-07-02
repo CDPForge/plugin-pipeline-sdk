@@ -1,6 +1,6 @@
 {
     "name": "@cdp-forge/plugin-pipeline-sdk",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "description": "SDK for pipeline plugins for CDP Forge platform",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
