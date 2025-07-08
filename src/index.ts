@@ -4,3 +4,4 @@ export { default as ConfigListener } from './ConfigListener';
 export { default as ConfigReader } from './ConfigReader';
 export { start } from './startServer';
 export type * from '@cdp-forge/types';
+export { GoogleTopicsMap } from '@cdp-forge/types'
