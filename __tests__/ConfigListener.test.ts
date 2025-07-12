@@ -49,15 +49,22 @@ describe("ConfigListener", () => {
         // Setup test config
         config = {
             plugin: {
-                name: "test-plugin"
+                name: "test-plugin",
+                priority: 0,
+                type: "blocking"
             },
-            kafkaConfig: {
+            kafka: {
                 brokers: ["localhost:9092"]
             },
-            manager: {
-                config_topic: "config-topic"
+            pipelinemanager: {
+                config_topic: "config-topic",
+                url: "http://localhost:8080",
+                first_topic: "first-topic"
+            },
+            pod: {
+                name: "test-pod"
             }
-        } as Config;
+        };
 
         configListener = new ConfigListener(mockStage, config);
     });

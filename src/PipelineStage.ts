@@ -1,7 +1,6 @@
 import { Kafka, Producer, Consumer, EachMessagePayload } from "kafkajs";
 import { PipelinePluginI } from "./plugin/PipelinePluginI";
 import { Log, Config } from "@cdp-forge/types";
-import custer_config from "config";
 
 export default class PipelineSTage{
     plugin: PipelinePluginI;
@@ -16,8 +15,8 @@ export default class PipelineSTage{
     constructor(plugin: PipelinePluginI, config: Config) {
         this.plugin = plugin;
         this.kafka = new Kafka({
-          clientId: config.plugin!.name + `plugin-${custer_config.get("pod.name")}`,
-          brokers: config.kafkaConfig!.brokers,
+          clientId: config.plugin!.name + `plugin-${config.pod.name}`,
+          brokers: config.kafka!.brokers,
         });
         this.consumer = this.kafka.consumer({ groupId: config.plugin!.name + `plugin` });
         this.producer = this.kafka.producer();

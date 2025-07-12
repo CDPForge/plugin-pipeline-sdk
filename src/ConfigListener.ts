@@ -1,22 +1,21 @@
 import {Kafka, Consumer, EachMessagePayload} from "kafkajs";
-import PipelineSTage from "./PipelineStage";
+import PipelineStage from "./PipelineStage";
 import { ConfigMessage, Config } from "@cdp-forge/types";
-import custer_config from "config";
 
 export default class ConfigListener {
     private kafka: Kafka;
     private consumer: Consumer;
-    private stage: PipelineSTage;
+    private stage: PipelineStage;
     private config: Config;
-    private consumerReadyP: Promise<void>;
+    private readonly consumerReadyP: Promise<void>;
 
-    constructor(stage: PipelineSTage, config: Config) {
+    constructor(stage: PipelineStage, config: Config) {
         this.config = config;
         this.kafka = new Kafka({
-            clientId: config.plugin!.name + `plugin-${custer_config.get("pod.name")}`,
-            brokers: config.kafkaConfig!.brokers,
+            clientId: config.plugin!.name + `plugin-${config.pod.name}`,
+            brokers: config.kafka!.brokers,
           });
-          this.consumer = this.kafka.consumer({ groupId: config.plugin!.name + `plugin-${custer_config.get("pod.name")}`});
+          this.consumer = this.kafka.consumer({ groupId: config.plugin!.name + `plugin-${config.pod.name}`});
 
         this.stage = stage;
         this.consumerReadyP = new Promise<void>((resolve) => {
@@ -26,7 +25,7 @@ export default class ConfigListener {
 
     async start(): Promise<void> {
         await this.consumer.connect();
-        await this.consumer.subscribe({ topic: this.config.manager!.config_topic, fromBeginning: false });
+        await this.consumer.subscribe({ topic: this.config.pipelinemanager!.config_topic, fromBeginning: false });
         await this.consumer.run({
             autoCommit: false,
             eachMessage: async ({ topic, partition, message  }: EachMessagePayload) => {

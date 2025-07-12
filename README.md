@@ -112,8 +112,6 @@ plugin:
   name: 'myPlugin'
   priority: 1 # 1 to 100 (not required if parallel)
   type: 'blocking' # or 'parallel'
-
-[any other useful string for the plugin]
 ```
 
 ### Field Descriptions
@@ -164,7 +162,7 @@ import { ConfigReader } from 'plugin-pipeline-sdk';
 const config = ConfigReader.getInstance('./config/config.yml', './config/plugin.yml').config;
 
 // Access cluster configuration
-console.log(config.kafkaConfig.brokers);
+console.log(config.kafka.brokers);
 console.log(config.manager.url);
 
 // Access plugin configuration
