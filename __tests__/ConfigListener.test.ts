@@ -2,11 +2,9 @@ import { Kafka, Consumer, EachMessagePayload } from "kafkajs";
 import ConfigListener from "../src/ConfigListener";
 import PipelineStage from "../src/PipelineStage";
 import { Config, ConfigMessage } from "@cdp-forge/types";
-import custer_config from "config";
 
 // Mock delle dipendenze
 jest.mock("kafkajs");
-jest.mock("config");
 jest.mock("../src/PipelineStage");
 
 const mockKafka = Kafka as jest.MockedClass<typeof Kafka>;
@@ -22,8 +20,6 @@ const mockPipelineStage = {
     restart: jest.fn(),
 } as unknown as jest.Mocked<PipelineStage>;
 
-const mockConfig = custer_config as jest.Mocked<typeof custer_config>;
-
 describe("ConfigListener", () => {
     let configListener: ConfigListener;
     let mockStage: jest.Mocked<PipelineStage>;
@@ -32,9 +28,6 @@ describe("ConfigListener", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-
-        // Setup mock config
-        mockConfig.get.mockReturnValue("test-pod");
 
         // Setup mock Kafka instance
         mockKafkaInstance = {

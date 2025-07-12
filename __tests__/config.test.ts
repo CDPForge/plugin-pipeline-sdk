@@ -1,3 +1,5 @@
+import {Config} from "@cdp-forge/types";
+
 describe('Classe Config', () => {
   beforeEach(() => {
     // Imposta le env PRIMA di importare config
@@ -8,9 +10,9 @@ describe('Classe Config', () => {
     jest.resetModules();
   });
 
-  it('should user env variables', () => {
-    const config = require('config');
-    expect(config.get("kafka.brokers")).toEqual(['a:9092','b:90902']);
-    expect(config.get("pipelinemanager.first_topic")).toEqual('topic');
+  it('should user env variables', async () => {
+    const config: Config = (await import('../src/config/default')).default;
+    expect(config.kafka!.brokers).toEqual(['a:9092','b:90902']);
+    expect(config.pipelinemanager!.first_topic).toEqual('topic');
   });
 });

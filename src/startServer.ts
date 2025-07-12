@@ -2,10 +2,10 @@ import { PipelinePluginI } from './plugin/PipelinePluginI';
 import { Config } from '@cdp-forge/types';
 import PipelineStage from './PipelineStage';
 import ConfigListener from './ConfigListener';
-import clusterConfig from 'config';
+import clusterConfig from './config/default';
 
 export async function start(plugin: PipelinePluginI, pluginConfig: Config['plugin']) {
-    const config: Config = Object.assign(clusterConfig.util.toObject(), { plugin: pluginConfig });
+    const config: Config = Object.assign(clusterConfig, { plugin: pluginConfig });
     const stage = new PipelineStage(plugin, config);
     const configListener = new ConfigListener(stage, config);
     await configListener.start();
