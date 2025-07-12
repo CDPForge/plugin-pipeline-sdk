@@ -18,8 +18,8 @@ export default class PipelineSTage{
           clientId: config.plugin!.name + `plugin-${config.pod.name}`,
           brokers: config.kafka!.brokers,
         });
-        this.consumer = this.kafka.consumer({ groupId: config.plugin!.name + `plugin` });
-        this.producer = this.kafka.producer();
+        this.consumer = this.kafka.consumer({ allowAutoTopicCreation: true, groupId: config.plugin!.name + `plugin` });
+        this.producer = this.kafka.producer({ allowAutoTopicCreation: true });
         this.consumerReadyP = new Promise<void>((resolve) => {
            this.consumer.on("consumer.fetch_start", () => resolve())
         });

@@ -15,7 +15,7 @@ export default class ConfigListener {
             clientId: config.plugin!.name + `plugin-${config.pod.name}`,
             brokers: config.kafka!.brokers,
           });
-          this.consumer = this.kafka.consumer({ groupId: config.plugin!.name + `plugin-${config.pod.name}`});
+          this.consumer = this.kafka.consumer({ allowAutoTopicCreation: true, groupId: config.plugin!.name + `plugin-${config.pod.name}`});
 
         this.stage = stage;
         this.consumerReadyP = new Promise<void>((resolve) => {
