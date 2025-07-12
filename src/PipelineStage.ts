@@ -1,8 +1,7 @@
 import { Kafka, Producer, Consumer, EachMessagePayload } from "kafkajs";
 import { PipelinePluginI } from "./plugin/PipelinePluginI";
 import { Log, Config } from "@cdp-forge/types";
-
-const podName = process.env.CLIENT_ID || 'default-client-id';
+import custer_config from "config";
 
 export default class PipelineSTage{
     plugin: PipelinePluginI;
@@ -12,15 +11,19 @@ export default class PipelineSTage{
     input: string | null;
     output: string | null;
     currentOperation: Promise<void>;
+    consumerReadyP: Promise<void>;
 
     constructor(plugin: PipelinePluginI, config: Config) {
         this.plugin = plugin;
         this.kafka = new Kafka({
-          clientId: config.plugin!.name + `plugin-${podName}`,
+          clientId: config.plugin!.name + `plugin-${custer_config.get("pod.name")}`,
           brokers: config.kafkaConfig!.brokers,
         });
         this.consumer = this.kafka.consumer({ groupId: config.plugin!.name + `plugin` });
         this.producer = this.kafka.producer();
+        this.consumerReadyP = new Promise<void>((resolve) => {
+           this.consumer.on("consumer.fetch_start", () => resolve())
+        });
         this.input = null;
         this.output = null;
         this.currentOperation = Promise.resolve();
@@ -56,11 +59,12 @@ export default class PipelineSTage{
               await this.producer.send({
                 topic: this.output,
                 messages: [{ value: JSON.stringify(elaboratedLog) }],
-                });
+              });
               await this.consumer.commitOffsets([{ topic, partition, offset: (BigInt(message.offset) + 1n).toString() }]);
             }
           },
         });
+        await this.consumerReadyP;
     }
 
     async stop(): Promise<void> {

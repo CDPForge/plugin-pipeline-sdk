@@ -1,24 +1,27 @@
-import { Kafka, Consumer, EachMessagePayload } from "kafkajs";
+import {Kafka, Consumer, EachMessagePayload} from "kafkajs";
 import PipelineSTage from "./PipelineStage";
 import { ConfigMessage, Config } from "@cdp-forge/types";
-
-const podName = process.env.CLIENT_ID || Math.random().toString(36).substring(2, 10);
+import custer_config from "config";
 
 export default class ConfigListener {
     private kafka: Kafka;
     private consumer: Consumer;
     private stage: PipelineSTage;
     private config: Config;
+    private consumerReadyP: Promise<void>;
 
     constructor(stage: PipelineSTage, config: Config) {
         this.config = config;
         this.kafka = new Kafka({
-            clientId: config.plugin!.name + `plugin-${podName}`,
+            clientId: config.plugin!.name + `plugin-${custer_config.get("pod.name")}`,
             brokers: config.kafkaConfig!.brokers,
           });
-          this.consumer = this.kafka.consumer({ groupId: config.plugin!.name + `plugin-${podName}`});
+          this.consumer = this.kafka.consumer({ groupId: config.plugin!.name + `plugin-${custer_config.get("pod.name")}`});
 
         this.stage = stage;
+        this.consumerReadyP = new Promise<void>((resolve) => {
+            this.consumer.on("consumer.fetch_start", ()=> resolve());
+        });
     }
 
     async start(): Promise<void> {
@@ -35,5 +38,6 @@ export default class ConfigListener {
                 await this.consumer.commitOffsets([{ topic, partition, offset: (BigInt(message.offset) + 1n).toString() }]);
             }
         });
+        await this.consumerReadyP;
     }
 }
