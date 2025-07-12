@@ -20,8 +20,7 @@ function env<T extends Parsed>(key: string, fallback: T, type: 'string' | 'numbe
 
 const config: Config =  {
     kafka: {
-        brokers: env<string[]>('KAFKA_BROKERS', ['cdp-forge-kafka-kafka-bootstrap:9092'], 'string[]'),
-        fistPipelineTopic: env("KAFKA_BASE_TOPIC", "logs")
+        brokers: env<string[]>('KAFKA_BROKERS', ['cdp-forge-kafka-kafka-bootstrap:9092'], 'string[]')
     },
     mysql: {
         uri: env("MYSQL_URI","mysql://root:cdp-forge-root-2024@cdp-forge-mysql:3306/cdpforge")
@@ -33,7 +32,8 @@ const config: Config =  {
     },
     pipelinemanager: {
         config_topic: env("PIPELINEMANAGER_CONFIG_TOPIC","config"),
-        url: env("PIPELINEMANAGER_URL","http://cdp-forge-core-pipeline-manager")
+        url: env("PIPELINEMANAGER_URL","http://cdp-forge-core-pipeline-manager"),
+        first_topic: env("PIPELINEMANAGER_FIRST_TOPIC", "logs")
     },
     pod: {
         name: env("CLIENT_ID", Math.random().toString(36).substring(2, 10))
