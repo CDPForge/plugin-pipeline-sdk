@@ -78,6 +78,7 @@ export default class PipelineSTage{
     }
 
     async restart(inputTopic: string,outputTopic: string|undefined): Promise<void> {
+        if(this.input === inputTopic && this.output === outputTopic) return;
         await this.stop();
         await this.start(inputTopic,outputTopic);
     }
