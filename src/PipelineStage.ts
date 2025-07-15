@@ -35,7 +35,7 @@ export default class PipelineSTage{
     private async _start(): Promise<void> {
         if(this.output) {
             this.producer = await this.pulsar.createProducer({
-                topic: this.config.pipelinemanager!.first_topic,
+                topic: this.output,
                 producerName: this.config.plugin!.name + "-" + this.config.pod.name
             });
         }
@@ -59,8 +59,8 @@ export default class PipelineSTage{
                     await this.producer.send({
                         data: Buffer.from(JSON.stringify(elaboratedLog)),
                     });
-                    await msgConsumer.acknowledge(msg);
                 }
+                await msgConsumer.acknowledge(msg);
             },
         });
     }
