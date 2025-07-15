@@ -14,6 +14,7 @@
         "test": "npx jest",
         "test:build": "tsc -p tsconfig.test.json",
         "build": "tsc",
+        "prebuild": "npm run clean",
         "prepublishOnly": "npm run build",
         "clean": "rm -rf dist"
     },
