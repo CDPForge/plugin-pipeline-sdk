@@ -1,28 +1,23 @@
-import { Kafka, Producer, Consumer, EachMessagePayload } from "kafkajs";
+import Pulsar from 'pulsar-client';
 import { PipelinePluginI } from "./plugin/PipelinePluginI";
-import { Log, Config } from "@cdp-forge/types";
+import {Log, Config } from "@cdp-forge/types";
 
 export default class PipelineSTage{
     plugin: PipelinePluginI;
-    consumer: Consumer;
-    producer: Producer;
-    kafka: Kafka;
+    consumer: Pulsar.Consumer | null = null;
+    producer: Pulsar.Producer | null = null;
     input: string | null;
     output: string | null;
     currentOperation: Promise<void>;
-    consumerReadyP: Promise<void>;
+    private pulsar: Pulsar.Client;
+    private config: Config;
 
     constructor(plugin: PipelinePluginI, config: Config) {
         this.plugin = plugin;
-        this.kafka = new Kafka({
-          clientId: config.plugin!.name + `plugin-${config.pod.name}`,
-          brokers: config.kafka!.brokers,
+        this.pulsar = new Pulsar.Client({
+          serviceUrl: config.pulsar!.proxy
         });
-        this.consumer = this.kafka.consumer({ allowAutoTopicCreation: true, groupId: config.plugin!.name + `plugin` });
-        this.producer = this.kafka.producer({ allowAutoTopicCreation: true });
-        this.consumerReadyP = new Promise<void>((resolve) => {
-           this.consumer.on("consumer.fetch_start", () => resolve())
-        });
+        this.config = config;
         this.input = null;
         this.output = null;
         this.currentOperation = Promise.resolve();
@@ -30,7 +25,7 @@ export default class PipelineSTage{
 
     async start(inputTopic: string, outputTopic: string | null = null): Promise<void> {
         this.input = inputTopic;
-        this.output = outputTopic; 
+        this.output = outputTopic;
         this.currentOperation = this.currentOperation.then(() => this.plugin.init());
         await this.currentOperation;
         this.currentOperation = this._start();
@@ -38,32 +33,36 @@ export default class PipelineSTage{
     }
 
     private async _start(): Promise<void> {
-        if(this.output) await this.producer.connect();
+        if(this.output) {
+            this.producer = await this.pulsar.createProducer({
+                topic: this.config.pipelinemanager!.first_topic,
+                producerName: this.config.plugin!.name + "-" + this.config.pod.name
+            });
+        }
 
-        await this.consumer.connect();
-        await this.consumer.subscribe({ topic: this.input!, fromBeginning: false });
-        await this.consumer.run({
-          autoCommit: false,
-          eachMessage: async ({ topic, partition, message  }: EachMessagePayload) => {
-            const log: Log = message.value ? JSON.parse(message.value.toString()) : null;
-            if(!log) return;
-            const elaboratedLog = await this.plugin.elaborate(log);
-            if(!elaboratedLog) {
-              console.warn('Messaggio non elaborato');
-              await this.consumer.commitOffsets([{ topic, partition, offset: (BigInt(message.offset) + 1n).toString() }]);
-              return;
-            }
-      
-            if(this.output) {
-              await this.producer.send({
-                topic: this.output,
-                messages: [{ value: JSON.stringify(elaboratedLog) }],
-              });
-              await this.consumer.commitOffsets([{ topic, partition, offset: (BigInt(message.offset) + 1n).toString() }]);
-            }
-          },
+        this.consumer = await this.pulsar.subscribe({
+            topic: this.input!,
+            subscription:  this.config.plugin!.name,
+            subscriptionType: 'Shared',
+            listener: async (msg, msgConsumer) => {
+                console.log(msg.getData().toString());
+                const log: Log = JSON.parse(msg.getData().toString());
+                if(!log) return;
+                const elaboratedLog = await this.plugin.elaborate(log);
+                if(!elaboratedLog) {
+                    console.warn('Messaggio non elaborato');
+                    await msgConsumer.acknowledge(msg);
+                    return;
+                }
+
+                if(this.output && this.producer) {
+                    await this.producer.send({
+                        data: Buffer.from(JSON.stringify(elaboratedLog)),
+                    });
+                    await msgConsumer.acknowledge(msg);
+                }
+            },
         });
-        await this.consumerReadyP;
     }
 
     async stop(): Promise<void> {
@@ -73,13 +72,20 @@ export default class PipelineSTage{
     }
 
     private async _stop(): Promise<void> {
-        await this.consumer.disconnect();
-        await this.producer.disconnect(); 
+        await this.consumer?.close();
+        await this.producer?.close();
+        this.consumer = null;
+        this.producer = null;
     }
 
     async restart(inputTopic: string,outputTopic: string|undefined): Promise<void> {
         if(this.input === inputTopic && this.output === outputTopic) return;
         await this.stop();
         await this.start(inputTopic,outputTopic);
+    }
+
+    public async close(){
+        await this.stop();
+        await this.pulsar.close();
     }
 }

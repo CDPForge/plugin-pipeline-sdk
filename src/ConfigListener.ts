@@ -1,42 +1,40 @@
-import {Kafka, Consumer, EachMessagePayload} from "kafkajs";
+import Pulsar from 'pulsar-client';
 import PipelineStage from "./PipelineStage";
 import { ConfigMessage, Config } from "@cdp-forge/types";
 
 export default class ConfigListener {
-    private kafka: Kafka;
-    private consumer: Consumer;
     private stage: PipelineStage;
     private config: Config;
-    private readonly consumerReadyP: Promise<void>;
+    private pulsar: Pulsar.Client;
+    private consumer: Pulsar.Consumer|null = null;
 
     constructor(stage: PipelineStage, config: Config) {
-        this.config = config;
-        this.kafka = new Kafka({
-            clientId: config.plugin!.name + `plugin-${config.pod.name}`,
-            brokers: config.kafka!.brokers,
-          });
-          this.consumer = this.kafka.consumer({ allowAutoTopicCreation: true, groupId: config.plugin!.name + `plugin-${config.pod.name}`});
-
-        this.stage = stage;
-        this.consumerReadyP = new Promise<void>((resolve) => {
-            this.consumer.on("consumer.fetch_start", ()=> resolve());
+        this.pulsar = new Pulsar.Client({
+            serviceUrl: config.pulsar.proxy
         });
+        
+        this.config = config;
+        this.stage = stage;
     }
 
     async start(): Promise<void> {
-        await this.consumer.connect();
-        await this.consumer.subscribe({ topic: this.config.pipelinemanager!.config_topic, fromBeginning: false });
-        await this.consumer.run({
-            autoCommit: false,
-            eachMessage: async ({ topic, partition, message  }: EachMessagePayload) => {
-                const config: ConfigMessage = message.value ? JSON.parse(message.value.toString()) : null;
-
-                if (config && config.plugin === this.config.plugin!.name) {
-                    await this.stage.restart(config.inputTopic, config.outputTopic);
+        this.consumer = await this.pulsar.subscribe({
+            topic: this.config.pipelinemanager!.config_topic,
+            subscription:  this.config.plugin!.name + `plugin-${this.config.pod.name}`,
+            subscriptionType: 'Exclusive',
+            listener: async (msg, msgConsumer) => {
+                console.log(msg.getData().toString());
+                const cfgMessage: ConfigMessage = JSON.parse(msg.getData().toString());
+                if (cfgMessage && cfgMessage.plugin === this.config.plugin!.name) {
+                    await this.stage.restart(cfgMessage.inputTopic, cfgMessage.outputTopic);
                 }
-                await this.consumer.commitOffsets([{ topic, partition, offset: (BigInt(message.offset) + 1n).toString() }]);
-            }
+                await msgConsumer.acknowledge(msg);
+            },
         });
-        await this.consumerReadyP;
+    }
+
+    async stop(){
+        await this.consumer?.close();
+        await this.pulsar.close();
     }
 }

@@ -22,7 +22,8 @@ export async function start(plugin: PipelinePluginI, pluginConfig: Config['plugi
 
     const handleExit = async () => {
       console.log('Arresto del server in corso...');
-      await stage.stop();
+      await configListener.stop();
+      await stage.close();
       process.exit(0);
     };
     process.on('SIGINT', handleExit);
